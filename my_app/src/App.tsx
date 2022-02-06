@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-
+import GitHubStore from './store/GitHubStore/GitHubStore';
 function App() {
   return (
     <div className="App">
@@ -18,6 +18,17 @@ function App() {
         >
           World!
         </a>
+        <button onClick={ ()=> {
+
+          const gitHubStore = new GitHubStore();
+
+          const EXAMPLE_ORGANIZATION = 'ktsstudio';
+
+          gitHubStore.getOrganizationReposList({
+          organizationName: EXAMPLE_ORGANIZATION
+        }).then(result => {
+          console.log(result); // в консоли появится список репозиториев в ktsstudio
+        })}}>Click!</button>
       </header>
     </div>
   );
