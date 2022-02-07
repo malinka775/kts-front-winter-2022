@@ -1,10 +1,11 @@
 :root {
-    --color-main: #FF5555;
-    --color-hover: #FD8686;
+    --color-accent: #FF5555;
+    --color-accent-hovered: #FD8686;
     --color-disabled: #D9D9D9;
-    --link-hover:#208FBF;
-    --text-grey: #7E7E7E;
-
+    --link-hovered:#208FBF;
+    --color-hint: #7E7E7E;
+    --color-default: #000000;
+    --color-background: #FFFFFF;
 }
 
 * {
@@ -16,7 +17,7 @@
 .repos-list {
     padding: 20px;
     width: 397px;
-    background: #FFFFFF;
+    background: var(--color-background);
     display: grid;
     grid-gap: 20px;
 }
@@ -31,8 +32,8 @@
     padding: 17px 12px;
     width: 50px;
     height: 100%;
-    background: #FFFFFF;
-    border: 1px solid #D9D9D9;
+    background: var(--color-background);
+    border: 1px solid var(--color-disabled);
     border-radius: 6px;
     flex-grow: 1;
 
@@ -40,20 +41,20 @@
 .searchbar__input::placeholder {
     font-weight: normal;
     font-size: 14px;
-    color: var(--text-grey);
+    color: var(--color-hint);
 }
 .searchbar__input:focus {
-    border: 1px solid var(--color-main);
+    border: 1px solid var(--color-accent);
     outline: none;
 }
 .searchbar__input:disabled {
-    color: var(--text-grey);
+    color: var(--color-hint);
 }
 .searchbar__btn {
     padding: 16px;
     height: 50px;
     flex: 50px 0 0;
-    background: var(--color-main);
+    background: var(--color-accent);
     border: none;
     border-radius: 6px;
 }
@@ -62,7 +63,7 @@
 }
 .searchbar__btn:hover {
     cursor: pointer;
-    background-color: var(--color-hover);
+    background-color: var(--color-accent-hovered);
 }
 
 .repos-list__grid-wrapper {
@@ -74,7 +75,7 @@
     padding: 12px;
     display: flex;
     justify-content: flex-start;
-    border: 1px solid #D9D9D9;
+    border: 1px solid var(--color-disabled);
     box-sizing: border-box;
     border-radius: 6px;
 }
@@ -87,7 +88,7 @@
     width: 80px;
     height: 80px;
     border-radius: 100%;
-    background: var(--color-main) url("") center center/cover no-repeat;
+    background: var(--color-accent) url("") center center/cover no-repeat;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,7 +96,7 @@
 .repo__avatar__letter {
     font-weight: bold;
     font-size: 40px;
-    color: #FFFFFF;
+    color: var(--color-background);
 }
 
 .repo__info {
@@ -108,7 +109,7 @@
     font-weight: bold;
     font-size: 16px;
     line-height: 19px;
-    color: #000000;
+    color: var(--color-default);
     width: 241px;
     white-space: nowrap;
     overflow: hidden;
@@ -121,13 +122,13 @@
     font-weight: normal;
     font-size: 14px;
     line-height: 16px;
-    color: var(--text-grey);
+    color: var(--color-hint);
 }
 .repo__info__author-link:hover {
-    color: var(--link-hover)
+    color: var(--link-hovered)
 }
 .repo__info__author-link:visited {
-    color: var(--text-grey);
+    color: var(--color-hint);
 }
 .repo__other-info {
     display: flex;
@@ -138,7 +139,7 @@
     display: inline-block;
     font-weight: normal;
     font-size: 14px;
-    color: var(--text-grey);
+    color: var(--color-hint);
 }
 
 .repo__stars__img {
@@ -153,6 +154,6 @@
     margin-left: 20px;
     font-weight: normal;
     font-size: 14px;
-    color: var(--text-grey);
+    color: var(--color-hint);
 }
 
