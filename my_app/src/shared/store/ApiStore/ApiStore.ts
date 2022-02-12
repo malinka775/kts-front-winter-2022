@@ -2,43 +2,56 @@ import qs from "qs";
 import {ApiResponse, HTTPMethod, IApiStore, RequestParams, StatusHTTP} from "./types";
 
 export default class ApiStore implements IApiStore {
-    readonly baseUrl: string;
+    baseUrl: string;
 
     constructor(baseUrl: string) {
-        // TODO: Примите из параметров конструктора baseUrl
-        this.baseUrl = baseUrl;
+        this.baseUrl = baseUrl
     }
 
-    request<SuccessT, ErrorT = any, ReqT = {}>(params: RequestParams<ReqT>): Promise<ApiResponse<SuccessT, ErrorT>> {
-        // TODO: Напишите здесь код, который с помощью fetch будет делать запрос
-        try{
-            let fetchingUrl: string;
-            if(params.method === HTTPMethod.GET && params.data) {
-                fetchingUrl = `${this.baseUrl}${params.endpoint}?${qs.stringify(params.data)}`
-            } else {
-                fetchingUrl = `${this.baseUrl}${params.endpoint}`
-            }
+    private getRequestData<ReqT>(params:RequestParams<ReqT>): [string, RequestInit] {
+        let endpoint = `${this.baseUrl}${params.endpoint}`
 
-            return fetch(fetchingUrl, {
-                method: params.method,
-                headers: params.headers
-            })
-                .then(response => {
-                    return response.json()
-                })
-                .then(data => {
-                    return {
-                    success: true,
-                    data: data,
-                    status: StatusHTTP.success,
-                }})}
-        catch (error){
-            return new Promise((error) => {
-                return {
-                success: false,
-                data: error,
-                status: StatusHTTP.error,
-            }})
+        const req: RequestInit = {
+            method: params.method,
+            headers: {...params.headers},
         }
+
+        if(params.method === HTTPMethod.GET) {
+            endpoint = `${endpoint}?${qs.stringify(params.data)}`
+
+        }
+        if (params.method === HTTPMethod.POST) {
+            req.body = JSON.stringify(params.data)
+            req.headers = {
+                ...req.headers,
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        }
+        return [endpoint, req]
+    }
+    async request<SuccessT, ErrorT = any, ReqT = {}>(params: RequestParams<ReqT>): Promise<ApiResponse<SuccessT, ErrorT>> {
+        try {
+            const response = await fetch(...this.getRequestData(params))
+            if (response.ok) {
+                return {
+                    success: true,
+                    data: await response.json(),
+                    status: response.status,
+                }
+            }
+            return {
+                success: false,
+                data: await response.json(),
+                status: response.status,
+            }
+        } catch (e) {
+            return {
+                success: false,
+                data: e,
+                status: StatusHTTP.UNEXPECTED_ERROR,
+            }
+        }
+
+
     }
 }
