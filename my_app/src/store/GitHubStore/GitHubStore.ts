@@ -1,5 +1,5 @@
 import ApiStore from '../../shared/store/ApiStore';
-import {GetOrganizationReposListParams, IGitHubStore, RepoItem} from "./types";
+import {CreateRepoParams, GetOrganizationReposListParams, IGitHubStore, RepoItem} from "./types";
 import {ApiResponse, HTTPMethod} from "../../shared/store/ApiStore/types";
 
 export default class GitHubStore implements IGitHubStore {
@@ -15,4 +15,20 @@ export default class GitHubStore implements IGitHubStore {
             }
         )
     }
+
+
+
+    async createRepo(params: CreateRepoParams): Promise<ApiResponse<string, any>> {
+        return this.apiStore.request({
+            method: HTTPMethod.POST,
+            endpoint: `/user/repos`,
+            headers: {
+                Authorization: "token " + params.token,
+                accept: "application/vnd.github.v3+json",
+            },
+            data: { name: params.repoName },
+        });
+
+    }
+
 }

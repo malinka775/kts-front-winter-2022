@@ -9,11 +9,18 @@ import {ApiResponse, StatusHTTP} from "../../shared/store/ApiStore/types";
  */
 export interface IGitHubStore {
     getOrganizationReposList(params: GetOrganizationReposListParams): Promise<ApiResponse<RepoItem[], any>>;
+    createRepo(params: CreateRepoParams): Promise<ApiResponse<string, any>>;
+
 }
 
 export type GetOrganizationReposListParams = {
-    organizationName: string
-};
+    organizationName: string,
+}
+
+export type CreateRepoParams = {
+    repoName: string,
+    token: string
+}
 
 export type RepoItem = {
     id: number,
@@ -30,3 +37,4 @@ export type RepoItem = {
     disabled: false,
     visibility: string,
 };
+
