@@ -34,19 +34,23 @@
 }
 
 .repo__info__author-link {
+  width: fit-content;
+  max-width: 241px;
   margin-bottom: 4px;
   text-decoration: none;
   font-weight: normal;
   font-size: 14px;
   line-height: 16px;
   color: var(--color-hint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1;
 }
 .repo__info__author-link:hover {
   color: var(--link-hovered)
 }
-.repo__info__author-link:visited {
-  color: var(--color-hint);
-}
+
 .repo__other-info {
   display: flex;
   flex-direction: row;

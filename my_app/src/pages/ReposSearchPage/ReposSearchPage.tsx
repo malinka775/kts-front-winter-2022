@@ -48,9 +48,14 @@ const ReposSearchPage: React.FC = () => {
     }
   };
 
-  const showBranches = (repo: RepoItem) => {
-    setSelectedRepo(repo);
-    setIsDrawerVisible(true);
+  const showBranches = (e: React.MouseEvent, repo: RepoItem) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === "A") {
+      return;
+    } else {
+      setSelectedRepo(repo);
+      setIsDrawerVisible(true);
+    }
   };
 
   const onCloseHandler = () => {
@@ -68,7 +73,7 @@ const ReposSearchPage: React.FC = () => {
           <RepoTile
             key={repo.id}
             RepoItem={repo}
-            onClick={(e) => showBranches(repo)}
+            onClick={(e) => showBranches(e, repo)}
           />
         );
       });
@@ -78,7 +83,7 @@ const ReposSearchPage: React.FC = () => {
           <RepoTile
             key={repo.id}
             RepoItem={repo}
-            onClick={(e) => showBranches(repo)}
+            onClick={(e) => showBranches(e, repo)}
           />
         );
       });

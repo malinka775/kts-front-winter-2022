@@ -25,7 +25,7 @@ gitHubStore
     token: TOKEN,
   })
   .then((result: ApiResponse<string, any>) => {
-    console.log(result);
+    return result;
   });
 
 // В ДЗ 1 Не требуется визуально в разметке отображать результат запроса к сети. Достаточно вывести в console.log
