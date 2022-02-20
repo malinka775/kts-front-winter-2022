@@ -1,0 +1,78 @@
+.repos-list__grid-wrapper {
+  display: grid;
+  grid-gap: 16px;
+}
+
+.repo {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-start;
+  border: 1px solid var(--color-disabled);
+  box-sizing: border-box;
+  border-radius: 6px;
+}
+
+.repo:hover {
+  cursor: pointer;
+}
+
+.repo__info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.repo__info__title {
+  margin-bottom: 4px;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 19px;
+  color: var(--color-default);
+  width: 241px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.repo__info__author-link {
+  margin-bottom: 4px;
+  text-decoration: none;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 16px;
+  color: var(--color-hint);
+}
+.repo__info__author-link:hover {
+  color: var(--link-hovered)
+}
+.repo__info__author-link:visited {
+  color: var(--color-hint);
+}
+.repo__other-info {
+  display: flex;
+  flex-direction: row;
+}
+
+.repo__stars {
+  display: inline-block;
+  font-weight: normal;
+  font-size: 14px;
+  color: var(--color-hint);
+}
+
+.repo__stars__number {
+  margin-left: 5px;
+}
+
+.repo__stars__img {
+  height: 12px;
+  width: 13px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.repo__other-info__updates {
+  margin-left: 20px;
+  font-weight: normal;
+  font-size: 14px;
+  color: var(--color-hint);
+}
