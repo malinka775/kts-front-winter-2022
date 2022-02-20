@@ -13,13 +13,15 @@ import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
 
 const ReposSearchPage: React.FC = () => {
-  const [repos, setRepos] = useState<RepoItem[]>();
+  const [repos, setRepos] = useState<RepoItem[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedRepo, setSelectedRepo] = useState<RepoItem>();
+  const [selectedRepo, setSelectedRepo] = useState<RepoItem | null>(null);
   const [isDrawerVisible, setIsDrawerVisible] = useState<boolean>(false);
-  const gitHubStore = new GitHubStore();
 
+  const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
+  const gitHubStore = new GitHubStore();
+  let filtered;
   useEffect(() => {
     gitHubStore
       .getOrganizationReposList({
@@ -31,17 +33,19 @@ const ReposSearchPage: React.FC = () => {
       });
   }, []);
 
-  const onClickHandler = () => {
+  const onClickHandler: () => void = () => {
     if (repos) {
-      const filteredRepos = repos.filter((repo) =>
-        repo.name.includes(inputValue)
-      );
-      setRepos(filteredRepos);
+      filtered = repos.filter((repo) => repo.name.includes(inputValue));
+      setFilteredRepos(filtered);
     }
   };
 
-  const onChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
-    setInputValue(e.currentTarget.value);
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (repos) {
+      filtered = repos.filter((repo) => repo.name.includes(e.target.value));
+      setFilteredRepos(filtered);
+    }
   };
 
   const showBranches = (repo: RepoItem) => {
@@ -50,9 +54,37 @@ const ReposSearchPage: React.FC = () => {
   };
 
   const onCloseHandler = () => {
-    setSelectedRepo(undefined);
+    setSelectedRepo(null);
     setIsDrawerVisible(false);
   };
+
+  function renderRepos() {
+    if (isLoading) {
+      return <Spin tip="Загрузка..." />;
+    }
+    if (filteredRepos) {
+      return filteredRepos.map((repo: RepoItem) => {
+        return (
+          <RepoTile
+            key={repo.id}
+            RepoItem={repo}
+            onClick={(e) => showBranches(repo)}
+          />
+        );
+      });
+    } else {
+      return repos?.map((repo: RepoItem) => {
+        return (
+          <RepoTile
+            key={repo.id}
+            RepoItem={repo}
+            onClick={(e) => showBranches(repo)}
+          />
+        );
+      });
+    }
+  }
+
   return (
     <div className="repos-search-page">
       {selectedRepo ? (
@@ -73,23 +105,7 @@ const ReposSearchPage: React.FC = () => {
         />
         <Button children={<SearchIcon />} onClick={onClickHandler} />
       </div>
-      <div className="repos-list__grid-wrapper">
-        {isLoading ? (
-          <Spin tip="Загрузка..." />
-        ) : repos ? (
-          repos.map((repo: RepoItem) => {
-            return (
-              <RepoTile
-                key={repo.id}
-                RepoItem={repo}
-                onClick={(e) => showBranches(repo)}
-              />
-            );
-          })
-        ) : (
-          <></>
-        )}
-      </div>
+      <div className="repos-list__grid-wrapper">{renderRepos()}</div>
     </div>
   );
 };

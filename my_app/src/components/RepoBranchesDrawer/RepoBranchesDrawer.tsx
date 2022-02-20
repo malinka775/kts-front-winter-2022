@@ -35,7 +35,7 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
 
   return (
     <Drawer
-      title="Список веток:"
+      title={`Список веток в ${selectedRepo.name}:`}
       placement="left"
       onClose={onClose}
       visible={visible}

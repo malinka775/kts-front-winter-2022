@@ -5,7 +5,7 @@ import "./Input.css";
 type InputProps = {
   value: string;
   placeholder: string;
-  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled: boolean;
 };
 
