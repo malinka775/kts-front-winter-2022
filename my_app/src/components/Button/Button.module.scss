@@ -1,0 +1,17 @@
+@import "../../variables";
+
+.button {
+    padding: 16px;
+    background: $color-accent;
+    border: none;
+    @include square(50px, 6px);
+
+    &:disabled {
+        background-color: $color-disabled;
+    }
+
+    &:hover {
+        cursor: pointer;
+        background-color: $color-accent-hovered;
+    }
+}

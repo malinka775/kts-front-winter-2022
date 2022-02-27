@@ -1,0 +1,28 @@
+@import "../../variables";
+
+.input {
+    margin-right: 12px;
+    padding: 17px 12px;
+    width: 50px;
+    height: 100%;
+    background: $color-background;
+    border: 1px solid $color-disabled;
+    border-radius: 6px;
+    flex-grow: 1;
+
+    &::placeholder {
+        font-weight: normal;
+        font-size: 14px;
+        color: $color-hint;
+    }
+
+    &:focus {
+        border: 1px solid $color-accent;
+        outline: none;
+    }
+
+    &:disabled {
+        color: $color-hint;
+    }
+
+}
