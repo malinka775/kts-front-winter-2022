@@ -1,4 +1,4 @@
-.repo__avatar {
+.avatar {
     margin-right: 12px;
     width: 80px;
     height: 80px;
@@ -7,14 +7,14 @@
     text-align: center;
     background-color: var(--color-accent);
 }
-.repo__avatar__letter {
+.avatar__letter {
     font-weight: bold;
     font-size: 40px;
     line-height: 2;
     color: var(--color-background);
 }
 
-.repo__avatar__img {
+.avatar__img {
     width: 100%;
     height: 100%;
     object-fit: cover;

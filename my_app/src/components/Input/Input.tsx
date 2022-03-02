@@ -17,7 +17,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <input
-      className="searchbar__input"
+      className="input"
       type="text"
       placeholder={placeholder}
       value={value}

@@ -10,7 +10,7 @@ type ButtonProps = {
 
 const Button: React.FC<ButtonProps> = ({ children, onClick, disabled }) => {
   return (
-    <button className="searchbar__btn" onClick={onClick} disabled={disabled}>
+    <button className="button" onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

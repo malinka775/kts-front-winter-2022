@@ -10,11 +10,11 @@ type AvatarProps = {
 
 const Avatar: React.FC<AvatarProps> = ({ src, alt, letter }) => {
   return (
-    <div className="repo__avatar">
+    <div className="avatar">
       {src ? (
-        <img className="repo__avatar__img" src={src} alt={alt} />
+        <img className="avatar__img" src={src} alt={alt} />
       ) : (
-        <span className={"repo__avatar__letter"}>{letter}</span>
+        <span className={"avatar__letter"}>{letter}</span>
       )}
     </div>
   );

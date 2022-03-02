@@ -1,4 +1,4 @@
-.searchbar__input {
+.input {
     margin-right: 12px;
     padding: 17px 12px;
     width: 50px;
@@ -9,15 +9,15 @@
     flex-grow: 1;
 
 }
-.searchbar__input::placeholder {
+.input::placeholder {
     font-weight: normal;
     font-size: 14px;
     color: var(--color-hint);
 }
-.searchbar__input:focus {
+.input:focus {
     border: 1px solid var(--color-accent);
     outline: none;
 }
-.searchbar__input:disabled {
+.input:disabled {
     color: var(--color-hint);
 }
