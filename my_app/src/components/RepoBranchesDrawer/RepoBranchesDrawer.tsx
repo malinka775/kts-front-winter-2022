@@ -44,7 +44,7 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
         <Spin tip="Загрузка..." />
       ) : (
         branches.map((branch: Branch) => {
-          return <li key={branch.name + Date.now()}>{branch.name}</li>;
+          return <li key={branch.name}>{branch.name}</li>;
         })
       )}
     </Drawer>

@@ -7,7 +7,7 @@ type SearchIconProps = {
 const SearchIcon: React.FC<SearchIconProps> = ({ currentColor = "white" }) => {
   return (
     <svg
-    className="stars__img"
+      className="stars__img"
       width="18"
       height="18"
       viewBox="0 0 18 18"

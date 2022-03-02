@@ -108,7 +108,9 @@ const ReposSearchPage: React.FC = () => {
           placeholder="Введите название организации"
           onChange={onChangeHandler}
         />
-        <Button children={<SearchIcon />} onClick={onClickHandler} />
+        <Button onClick={onClickHandler}>
+          <SearchIcon />
+        </Button>
       </div>
       <div className="repos-list__grid-wrapper">{renderRepos()}</div>
     </div>

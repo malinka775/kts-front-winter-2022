@@ -10,26 +10,10 @@ type RepoTileProps = {
   onClick: (e: React.MouseEvent) => void;
 };
 
-type DateTimeFormatOptions = {
-  localeMatcher?: "lookup" | "best fit";
-  weekday?: "long" | "short" | "narrow";
-  era?: "long" | "short" | "narrow";
-  year?: "numeric" | "2-digit";
-  month?: "numeric" | "2-digit" | "long" | "short" | "narrow";
-  day?: "numeric" | "2-digit";
-  hour?: "numeric" | "2-digit";
-  minute?: "numeric" | "2-digit";
-  second?: "numeric" | "2-digit";
-  timeZoneName?: "long" | "short";
-  formatMatcher?: "basic" | "best fit";
-  hour12?: boolean;
-  timeZone?: string;
-};
-
 const getFormatedDate: (dateStr: string) => string = (dateStr) => {
-  const date = new Date(dateStr);
+  const date:Date = new Date(dateStr);
   const days = date.getDate();
-  const options: DateTimeFormatOptions = {
+  const options: Intl.DateTimeFormatOptions = {
     month: "short",
   };
   return `${days} ${date.toLocaleString("en-US", options)}`;
