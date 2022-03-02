@@ -12,8 +12,6 @@ import GitHubStore from "@store/GitHubStore/GitHubStore";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
 
-
-
 const ReposSearchPage: React.FC = () => {
   const [repos, setRepos] = useState<RepoItem[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -36,10 +34,10 @@ const ReposSearchPage: React.FC = () => {
           setRepos(result.data as RepoItem[]);
         } else {
           setIsErrorData(true);
-          console.error((result.data as ErrorItem).message)
+          //eslint-disable-next-line no-console
+          console.error((result.data as ErrorItem).message);
         }
         setIsLoading(false);
-        
       });
   }, []);
 
@@ -79,7 +77,7 @@ const ReposSearchPage: React.FC = () => {
     }
     if (isErrorData) {
       return <div>{"Упс... Запрашиваемый репозиторий не найден"}</div>;
-    } 
+    }
     if (filteredRepos) {
       return filteredRepos.map((repo: RepoItem) => {
         return (

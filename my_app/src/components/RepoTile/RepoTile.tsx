@@ -11,7 +11,7 @@ type RepoTileProps = {
 };
 
 const getFormatedDate: (dateStr: string) => string = (dateStr) => {
-  const date:Date = new Date(dateStr);
+  const date: Date = new Date(dateStr);
   const days = date.getDate();
   const options: Intl.DateTimeFormatOptions = {
     month: "short",

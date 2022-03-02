@@ -34,10 +34,10 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
           setBranches(result.data as Branch[]);
         } else {
           setIsErrorData(true);
-          console.error( (result.data as ErrorItem).message);
+          //eslint-disable-next-line no-console
+          console.error((result.data as ErrorItem).message);
         }
         setIsLoading(false);
-        
       });
   }, [selectedRepo]);
 

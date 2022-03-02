@@ -40,10 +40,9 @@ export type ApiResponse<SuccessT, ErrorT> =
       status: StatusHTTP;
     };
 
-
 export type ErrorItem = {
   message: string;
-}
+};
 // Интерфейс для класса, с помощью которого можно делать запросы к API
 export interface IApiStore {
   readonly baseUrl: string;
