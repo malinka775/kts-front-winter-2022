@@ -1,16 +1,18 @@
 import "./ReposSearchPage.css";
 
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState, memo, ReactNode } from "react";
 
 import Button from "@components/Button";
 import Input from "@components/Input";
 import RepoBranchesDrawer from "@components/RepoBranchesDrawer";
 import RepoTile from "@components/RepoTile";
 import SearchIcon from "@components/SearchIcon";
-import { ApiResponse } from "@shared/store/ApiStore/types";
+import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore/GitHubStore";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
+
+
 
 const ReposSearchPage: React.FC = () => {
   const [repos, setRepos] = useState<RepoItem[] | null>(null);
@@ -18,18 +20,26 @@ const ReposSearchPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [selectedRepo, setSelectedRepo] = useState<RepoItem | null>(null);
   const [isDrawerVisible, setIsDrawerVisible] = useState<boolean>(false);
+  const [isErrorData, setIsErrorData] = useState<boolean>(false);
 
   const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
   const gitHubStore = new GitHubStore();
   let filtered;
+  let errorMessage;
   useEffect(() => {
     gitHubStore
       .getOrganizationReposList({
         organizationName: "ktsstudio",
       })
-      .then((result: ApiResponse<RepoItem[], any>) => {
-        setRepos(result.data);
+      .then((result: ApiResponse<RepoItem[], ErrorItem>) => {
+        if (result.status === 200) {
+          setRepos(result.data as RepoItem[]);
+        } else {
+          setIsErrorData(true);
+          console.error((result.data as ErrorItem).message)
+        }
         setIsLoading(false);
+        
       });
   }, []);
 
@@ -67,6 +77,9 @@ const ReposSearchPage: React.FC = () => {
     if (isLoading) {
       return <Spin tip="Загрузка..." />;
     }
+    if (isErrorData) {
+      return <div>{"Упс... Запрашиваемый репозиторий не найден"}</div>;
+    } 
     if (filteredRepos) {
       return filteredRepos.map((repo: RepoItem) => {
         return (

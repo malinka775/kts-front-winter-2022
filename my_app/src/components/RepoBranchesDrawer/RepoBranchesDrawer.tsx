@@ -1,6 +1,6 @@
 import { useState, useEffect, memo } from "react";
 
-import { ApiResponse } from "@shared/store/ApiStore/types";
+import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Branch } from "@store/GitHubStore/types";
@@ -19,7 +19,9 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
 }) => {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isErrorData, setIsErrorData] = useState<boolean>(false);
   const gitHubStore = new GitHubStore();
+  let errorMessage;
 
   useEffect(() => {
     gitHubStore
@@ -27,9 +29,15 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
         ownerName: selectedRepo.owner.login,
         repoName: selectedRepo.name,
       })
-      .then((result: ApiResponse<Branch[], any>) => {
-        setBranches(result.data);
+      .then((result: ApiResponse<Branch[], ErrorItem>) => {
+        if (result.status === 200) {
+          setBranches(result.data as Branch[]);
+        } else {
+          setIsErrorData(true);
+          console.error( (result.data as ErrorItem).message);
+        }
         setIsLoading(false);
+        
       });
   }, [selectedRepo]);
 
@@ -40,13 +48,11 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
       onClose={onClose}
       visible={visible}
     >
-      {isLoading ? (
-        <Spin tip="Загрузка..." />
-      ) : (
-        branches.map((branch: Branch) => {
-          return <li key={branch.name}>{branch.name}</li>;
-        })
-      )}
+      {isLoading && <Spin tip="Загрузка..." />}
+      {isErrorData && <div>Не удается загрузить репозиторий</div>}
+      {branches.map((branch: Branch) => {
+        return <li key={branch.name}>{branch.name}</li>;
+      })}
     </Drawer>
   );
 };
