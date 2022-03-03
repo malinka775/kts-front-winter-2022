@@ -14,7 +14,7 @@ export const ORGANIZATION_NAME = "ktsstudio";
 const AppReposContext = createContext<ReposContextProps>({
   list: null,
   isLoading: true,
-  load: () => {},
+  load: (page: number) => {},
 });
 
 function App() {

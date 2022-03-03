@@ -9,13 +9,17 @@ const useReposContext = (organizationName: string = ORGANIZATION_NAME) => {
   const [list, setList] = useState<RepoItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const load = () => {
+  const load = (page: number) => {
     new GitHubStore()
       .getOrganizationReposList({
         organizationName: organizationName,
+        page: page,
+        per_page: 7,
       })
       .then((result) => {
-        setList(result.data);
+        setList((prev) => {
+          return [...prev, ...result.data];
+        });
         setIsLoading(false);
       });
   };

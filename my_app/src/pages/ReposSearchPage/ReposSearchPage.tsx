@@ -1,5 +1,3 @@
-import styles from "./ReposSearchPage.module.scss";
-
 import { useEffect, useState, memo } from "react";
 import React from "react";
 
@@ -11,20 +9,21 @@ import SearchIcon from "@components/SearchIcon";
 import useReposContext from "@context/useReposContext";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
+
+import styles from "./ReposSearchPage.module.scss";
 
 const ReposSearchPage: React.FC = () => {
   const { list, load, isLoading } = useReposContext();
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedRepo, setSelectedRepo] = useState<RepoItem | null>(null);
-  const [isDrawerVisible, setIsDrawerVisible] = useState<boolean>(false);
-
   const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
+  const [page, setPage] = useState<number>(1);
 
   let filtered;
 
   useEffect(() => {
-    load();
+    load(page);
   }, []);
 
   const onClickHandler: () => void = () => {
@@ -45,7 +44,7 @@ const ReposSearchPage: React.FC = () => {
   };
   const renderRepos: () => JSX.Element | JSX.Element[] = () => {
     if (isLoading) {
-      return < Spin tip="Загрузка..." />;
+      return <Spin tip="Загрузка..." />;
     }
     if (filteredRepos) {
       return filteredRepos.map((repo: RepoItem) => {
@@ -56,6 +55,11 @@ const ReposSearchPage: React.FC = () => {
         return <RepoTile key={repo.id} RepoItem={repo} />;
       });
     }
+  };
+
+  const getNextData: () => void = async () => {
+    setPage(page + 1);
+    await load(page + 1);
   };
 
   return (
@@ -69,8 +73,19 @@ const ReposSearchPage: React.FC = () => {
         />
         <Button children={<SearchIcon />} onClick={onClickHandler} />
       </div>
-      <div className={styles.reposList__gridWrapper}>{renderRepos()}</div>
-      
+      <InfiniteScroll
+        dataLength={list.length} //This is important field to render the next data
+        next={getNextData}
+        hasMore={true}
+        loader={<h4>Loading...</h4>}
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+      >
+        {renderRepos()}
+      </InfiniteScroll>
     </div>
   );
 };
