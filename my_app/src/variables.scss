@@ -1,0 +1,16 @@
+$color-accent: #FF5555;
+$color-accent-hovered: #FD8686;
+$color-disabled: #D9D9D9;
+$link-hovered:#208FBF;
+$color-hint: #7E7E7E;
+$color-default: #000000;
+$color-background: #FFFFFF;
+$color-star-icon: #FF9432;
+
+@mixin square($size, $border-radius: none) {
+  width: $size;
+  height: $size;
+  @if($border-radius != none) {
+    border-radius: $border-radius;
+  }
+}

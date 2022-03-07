@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./Input.css";
+import styles from "./Input.module.scss";
 
 type InputProps = {
   value: string;
@@ -17,7 +17,7 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <input
-      className="input"
+      className={styles.input}
       type="text"
       placeholder={placeholder}
       value={value}

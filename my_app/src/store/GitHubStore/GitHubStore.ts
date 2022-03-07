@@ -19,7 +19,10 @@ export default class GitHubStore implements IGitHubStore {
       method: HTTPMethod.GET,
       endpoint: `/orgs/${params.organizationName}/repos`,
       headers: {}, // Объект с передаваемыми HTTP-заголовками
-      data: {},
+      data: {
+        page: params.page,
+        per_page: params.per_page,
+      },
     });
   }
 

@@ -27,6 +27,3 @@ gitHubStore
   .then((result: ApiResponse<string, any>) => {
     return result;
   });
-
-// В ДЗ 1 Не требуется визуально в разметке отображать результат запроса к сети. Достаточно вывести в console.log
-//eslint-disable-next-line no-console

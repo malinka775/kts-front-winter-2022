@@ -5,30 +5,39 @@ import GitHubStore from "@store/GitHubStore";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Branch } from "@store/GitHubStore/types";
 import { Drawer, Spin } from "antd";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
-type RepoBranchesDrawerProps = {
-  selectedRepo: RepoItem;
-  onClose: (e: any) => void;
-  visible: boolean;
+export type RepoBranchesDrawerProps = {
+  visible?: boolean;
 };
 
 const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
-  selectedRepo,
-  onClose,
-  visible,
+  visible = true,
 }) => {
+  interface RepoBranchesDrawerParams {
+    [repoName: string]: string;
+  }
+
+  type LocationState = {
+    selectedRepo: RepoItem;
+  };
+
+  const params = useParams<RepoBranchesDrawerParams>();
   const [branches, setBranches] = useState<Branch[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isErrorData, setIsErrorData] = useState<boolean>(false);
   const gitHubStore = new GitHubStore();
-  let errorMessage;
+  const location = useLocation();
+  const navigation = useNavigate();
+  const { selectedRepo } = location.state as LocationState;
 
   useEffect(() => {
-    gitHubStore
-      .getRepoBranchesList({
-        ownerName: selectedRepo.owner.login,
-        repoName: selectedRepo.name,
-      })
+    if (params.name) {
+      gitHubStore
+        .getRepoBranchesList({
+          ownerName: selectedRepo.owner.login,
+          repoName: params.name,
+        })
       .then((result: ApiResponse<Branch[], ErrorItem>) => {
         if (result.status === 200) {
           setBranches(result.data as Branch[]);
@@ -43,9 +52,9 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
 
   return (
     <Drawer
-      title={`Список веток в ${selectedRepo.name}:`}
+      title={`Список веток в ${params.name}:`}
       placement="left"
-      onClose={onClose}
+      onClose={(e) => navigation(-1)}
       visible={visible}
     >
       {isLoading && <Spin tip="Загрузка..." />}

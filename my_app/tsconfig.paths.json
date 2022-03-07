@@ -8,7 +8,8 @@
       "@utils/*": ["src/utils/*"],
       "@root/*": ["src/root/*"],
       "@store/*": ["src/store/*"],
-      "@shared/*": ["src/shared/*"]
+      "@shared/*": ["src/shared/*"],
+      "@context/*": ["src/context/*"]
     }
   }
 }

@@ -1,0 +1,16 @@
+.reposSearchPage{
+  padding: 20px;
+  width: 397px;
+  background: var(--color-background);
+  display: grid;
+  grid-gap: 20px;
+}
+.searchbar{
+  display: flex;
+  height: 50px;
+  max-width: 100%;
+}
+.reposList__gridWrapper {
+  display: grid;
+  grid-gap: 16px;
+}
