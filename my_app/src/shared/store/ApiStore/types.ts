@@ -36,7 +36,7 @@ export type ApiResponse<SuccessT, ErrorT> =
     }
   | {
       success: false;
-      data: any;
+      data: ErrorT;
       status: StatusHTTP;
     };
 
@@ -47,7 +47,7 @@ export type ErrorItem = {
 export interface IApiStore {
   readonly baseUrl: string;
 
-  request<SuccessT, ErrorT = any, ReqT = {}>(
+  request<SuccessT, ErrorT, ReqT = {}>(
     params: RequestParams<ReqT>
   ): Promise<ApiResponse<SuccessT, ErrorT>>;
 }

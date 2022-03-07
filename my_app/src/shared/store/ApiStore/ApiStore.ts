@@ -37,7 +37,7 @@ export default class ApiStore implements IApiStore {
     }
     return [endpoint, req];
   }
-  async request<SuccessT, ErrorT = any, ReqT = {}>(
+  async request<SuccessT, ErrorT, ReqT = {}>(
     params: RequestParams<ReqT>
   ): Promise<ApiResponse<SuccessT, ErrorT>> {
     try {
@@ -57,7 +57,7 @@ export default class ApiStore implements IApiStore {
     } catch (e) {
       return {
         success: false,
-        data: e,
+        data: e as ErrorT,
         status: StatusHTTP.UNEXPECTED_ERROR,
       };
     }
