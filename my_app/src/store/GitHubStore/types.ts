@@ -1,4 +1,4 @@
-import { ApiResponse, StatusHTTP } from "../../shared/store/ApiStore/types";
+import { ApiResponse, ErrorItem, StatusHTTP } from "../../shared/store/ApiStore/types";
 
 /** Интерфейс класса для работы с GitHub API
  * названия getOrganizationReposList
@@ -10,8 +10,8 @@ import { ApiResponse, StatusHTTP } from "../../shared/store/ApiStore/types";
 export interface IGitHubStore {
   getOrganizationReposList(
     params: GetOrganizationReposListParams
-  ): Promise<ApiResponse<RepoItem[], any>>;
-  createRepo(params: CreateRepoParams): Promise<ApiResponse<string, any>>;
+  ): Promise<ApiResponse<RepoItem[], ErrorItem>>;
+  createRepo(params: CreateRepoParams): Promise<ApiResponse<string, ErrorItem>>;
 }
 
 export type GetOrganizationReposListParams = {
