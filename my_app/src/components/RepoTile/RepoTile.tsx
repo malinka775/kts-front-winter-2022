@@ -9,7 +9,7 @@ import styles from "./RepoTile.module.scss";
 
 type RepoTileProps = {
   RepoItem: RepoItem;
-}
+};
 
 const getFormatedDate: (dateStr: string) => string = (dateStr) => {
   const date: Date = new Date(dateStr);

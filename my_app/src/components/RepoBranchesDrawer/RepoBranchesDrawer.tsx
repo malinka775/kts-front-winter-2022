@@ -38,16 +38,17 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
           ownerName: selectedRepo.owner.login,
           repoName: params.name,
         })
-      .then((result: ApiResponse<Branch[], ErrorItem>) => {
-        if (result.status === 200) {
-          setBranches(result.data as Branch[]);
-        } else {
-          setIsErrorData(true);
-          //eslint-disable-next-line no-console
-          console.error((result.data as ErrorItem).message);
-        }
-        setIsLoading(false);
-      });
+        .then((result: ApiResponse<Branch[], ErrorItem>) => {
+          if (result.status === 200) {
+            setBranches(result.data as Branch[]);
+          } else {
+            setIsErrorData(true);
+            //eslint-disable-next-line no-console
+            console.error((result.data as ErrorItem).message);
+          }
+          setIsLoading(false);
+        });
+    }
   }, [selectedRepo]);
 
   return (
