@@ -1,65 +1,58 @@
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState, memo, useCallback } from "react";
 import React from "react";
 
 import Button from "@components/Button";
 import Input from "@components/Input";
-import RepoBranchesDrawer from "@components/RepoBranchesDrawer";
 import RepoTile from "@components/RepoTile";
 import SearchIcon from "@components/SearchIcon";
 import useReposContext from "@context/useReposContext";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useNavigate } from "react-router-dom";
 
 import styles from "./ReposSearchPage.module.scss";
 
 const ReposSearchPage: React.FC = () => {
-  const { list, load, isLoading } = useReposContext();
+  const { list, load, isLoading, hasMore } = useReposContext();
   const [inputValue, setInputValue] = useState<string>("");
   const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
   const [page, setPage] = useState<number>(1);
-
-  let filtered;
+  let filtered: null | RepoItem[];
 
   useEffect(() => {
     load(page);
-  }, []);
+  }, [page]);
 
-  const onClickHandler: () => void = () => {
-    if (list) {
-      filtered = list.filter((repo) => repo.name.includes(inputValue));
-      setFilteredRepos(filtered);
+  useEffect(() => {
+    if (inputValue !== "") {
+      if (list) {
+        filtered = list.filter((repo) => repo.name.includes(inputValue));
+      }
+    } else {
+      filtered = null;
     }
-  };
+    setFilteredRepos(filtered);
+  }, [inputValue]);
+
+  const onClickHandler: () => void = useCallback(() => {
+    if (inputValue !== "") {
+      if (list) {
+        filtered = list.filter((repo) => repo.name.includes(inputValue));
+      }
+    } else {
+      filtered = null;
+    }
+    setFilteredRepos(filtered);
+  }, [inputValue]);
 
   const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void = (
     e
   ) => {
     setInputValue(e.target.value);
-    if (list) {
-      filtered = list.filter((repo) => repo.name.includes(e.target.value));
-      setFilteredRepos(filtered);
-    }
-  };
-  const renderRepos: () => JSX.Element | JSX.Element[] = () => {
-    if (isLoading) {
-      return <Spin tip="Загрузка..." />;
-    }
-    if (filteredRepos) {
-      return filteredRepos.map((repo: RepoItem) => {
-        return <RepoTile key={repo.id} RepoItem={repo} />;
-      });
-    } else {
-      return list?.map((repo: RepoItem) => {
-        return <RepoTile key={repo.id} RepoItem={repo} />;
-      });
-    }
   };
 
-  const getNextData: () => void = async () => {
+  const getNextData: () => void = () => {
     setPage(page + 1);
-    await load(page + 1);
   };
 
   return (
@@ -76,7 +69,7 @@ const ReposSearchPage: React.FC = () => {
       <InfiniteScroll
         dataLength={list.length} //This is important field to render the next data
         next={getNextData}
-        hasMore={true}
+        hasMore={hasMore}
         loader={<h4>Loading...</h4>}
         endMessage={
           <p style={{ textAlign: "center" }}>
@@ -84,7 +77,14 @@ const ReposSearchPage: React.FC = () => {
           </p>
         }
       >
-        {renderRepos()}
+        {isLoading && <Spin tip="Загрузка..." />}
+        {filteredRepos
+          ? filteredRepos.map((repo: RepoItem) => {
+              return <RepoTile key={repo.id} RepoItem={repo} />;
+            })
+          : list?.map((repo: RepoItem) => {
+              return <RepoTile key={repo.id} RepoItem={repo} />;
+            })}
       </InfiniteScroll>
     </div>
   );
