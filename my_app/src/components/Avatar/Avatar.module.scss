@@ -1,0 +1,24 @@
+@import "../../variables";
+
+.avatar {
+    margin-right: 12px;
+    overflow: hidden;
+    text-align: center;
+    background-color: $color-accent;
+    @include square(80px, 100%);
+
+    &__letter {
+        font-weight: bold;
+        font-size: 40px;
+        line-height: 2;
+        color: $color-background;
+    }
+
+    &__img {
+        object-fit: cover;
+        @include square(100%);
+    }
+}
+
+
+

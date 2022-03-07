@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { createContext } from "react";
+
+import "antd/dist/antd.css";
+import "./App.css";
+import RepoBranchesDrawer from "@components/RepoBranchesDrawer";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import { ReposContextProps } from "./context/types";
+import useReposContext from "./context/useReposContext";
+import ReposSearchPage from "./pages/ReposSearchPage";
+
+export const ORGANIZATION_NAME = "ktsstudio";
+
+const AppReposContext = createContext<ReposContextProps>({
+  list: null,
+  isLoading: true,
+  load: (page: number) => {},
+});
+
 function App() {
+  const { list, load, isLoading } = useReposContext(ORGANIZATION_NAME);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          World!
-        </a>
-      </header>
-    </div>
+    <AppReposContext.Provider value={{ list, load, isLoading }}>
+      <div className="App">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/repos" element={<ReposSearchPage />} />
+            <Route path="/repos/:name" element={<RepoBranchesDrawer />} />
+            <Route path="*" element={<ReposSearchPage />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </AppReposContext.Provider>
   );
 }
 

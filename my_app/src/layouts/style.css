@@ -6,6 +6,7 @@
     --color-hint: #7E7E7E;
     --color-default: #000000;
     --color-background: #FFFFFF;
+    --color-star-icon: #FF9432;
 }
 
 * {
@@ -147,7 +148,6 @@
     width: 13px;
     margin-right: 5px;
     vertical-align: middle;
-
 }
 
 .repo__other-info__updates {
