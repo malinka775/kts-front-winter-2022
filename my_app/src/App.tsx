@@ -3,24 +3,20 @@ import { createContext } from "react";
 import "antd/dist/antd.css";
 import "./App.css";
 import RepoBranchesDrawer from "@components/RepoBranchesDrawer";
+import ReposListStore from "@store/LocalStore/ReposListStore";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-import { ReposContextProps } from "./context/types";
 import useReposContext from "./context/useReposContext";
 import ReposSearchPage from "./pages/ReposSearchPage";
 
 export const ORGANIZATION_NAME = "ktsstudio";
 
-const AppReposContext = createContext<ReposContextProps>({
-  list: null,
-  isLoading: true,
-  load: (page: number) => {},
-});
+export const AppReposContext = createContext<ReposListStore | null>(null);
 
 function App() {
-  const { list, load, isLoading } = useReposContext(ORGANIZATION_NAME);
+  const ktsReposListStore = useReposContext("ktsstudio");
   return (
-    <AppReposContext.Provider value={{ list, load, isLoading }}>
+    <AppReposContext.Provider value={ktsReposListStore}>
       <div className="App">
         <BrowserRouter>
           <Routes>

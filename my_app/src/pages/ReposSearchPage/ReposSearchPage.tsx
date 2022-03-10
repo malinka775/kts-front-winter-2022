@@ -1,34 +1,34 @@
-import { useEffect, useState, memo, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import React from "react";
 
 import Button from "@components/Button";
 import Input from "@components/Input";
 import RepoTile from "@components/RepoTile";
 import SearchIcon from "@components/SearchIcon";
-import useReposContext from "@context/useReposContext";
-import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
-import GitHubStore from "@store/GitHubStore/GitHubStore";
 import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
+import { observer } from "mobx-react-lite";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import { AppReposContext } from "../../App";
 import styles from "./ReposSearchPage.module.scss";
 
 const ReposSearchPage: React.FC = () => {
-  const { list, load, isLoading, hasMore } = useReposContext();
+  const ktsReposListStore = useContext(AppReposContext);
   const [inputValue, setInputValue] = useState<string>("");
   const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
-  const [page, setPage] = useState<number>(1);
   let filtered: null | RepoItem[];
 
   useEffect(() => {
-    load(page);
-  }, [page]);
+    ktsReposListStore?.load(ktsReposListStore.page);
+  }, [ktsReposListStore?.page]);
 
   useEffect(() => {
     if (inputValue !== "") {
-      if (list) {
-        filtered = list.filter((repo) => repo.name.includes(inputValue));
+      if (ktsReposListStore?.list) {
+        filtered = ktsReposListStore.list.filter((repo) =>
+          repo.name.includes(inputValue)
+        );
       }
     } else {
       filtered = null;
@@ -38,8 +38,10 @@ const ReposSearchPage: React.FC = () => {
 
   const onClickHandler: () => void = useCallback(() => {
     if (inputValue !== "") {
-      if (list) {
-        filtered = list.filter((repo) => repo.name.includes(inputValue));
+      if (ktsReposListStore?.list) {
+        filtered = ktsReposListStore.list.filter((repo) =>
+          repo.name.includes(inputValue)
+        );
       }
     } else {
       filtered = null;
@@ -54,7 +56,9 @@ const ReposSearchPage: React.FC = () => {
   };
 
   const getNextData: () => void = () => {
-    setPage(page + 1);
+    if (ktsReposListStore) {
+      ktsReposListStore.getMore();
+    }
   };
 
   return (
@@ -71,9 +75,9 @@ const ReposSearchPage: React.FC = () => {
         </Button>
       </div>
       <InfiniteScroll
-        dataLength={list.length} //This is important field to render the next data
+        dataLength={ktsReposListStore ? ktsReposListStore.list.length : 0} //This is important field to render the next data
         next={getNextData}
-        hasMore={hasMore}
+        hasMore={ktsReposListStore ? ktsReposListStore.hasMore : false}
         loader={<h4>Loading...</h4>}
         endMessage={
           <p style={{ textAlign: "center" }}>
@@ -81,12 +85,12 @@ const ReposSearchPage: React.FC = () => {
           </p>
         }
       >
-        {isLoading && <Spin tip="Загрузка..." />}
+        {ktsReposListStore?.isLoading && <Spin tip="Загрузка..." />}
         {filteredRepos
           ? filteredRepos.map((repo: RepoItem) => {
               return <RepoTile key={repo.id} RepoItem={repo} />;
             })
-          : list?.map((repo: RepoItem) => {
+          : ktsReposListStore?.list?.map((repo: RepoItem) => {
               return <RepoTile key={repo.id} RepoItem={repo} />;
             })}
       </InfiniteScroll>
@@ -94,4 +98,4 @@ const ReposSearchPage: React.FC = () => {
   );
 };
 
-export default memo(ReposSearchPage);
+export default observer(ReposSearchPage);

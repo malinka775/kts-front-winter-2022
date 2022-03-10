@@ -1,5 +1,9 @@
 import ApiStore from "../../shared/store/ApiStore";
-import { ApiResponse, ErrorItem, HTTPMethod } from "../../shared/store/ApiStore/types";
+import {
+  ApiResponse,
+  ErrorItem,
+  HTTPMethod,
+} from "../../shared/store/ApiStore/types";
 import {
   CreateRepoParams,
   GetOrganizationReposListParams,
