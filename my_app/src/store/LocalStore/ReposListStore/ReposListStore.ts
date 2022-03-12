@@ -5,16 +5,23 @@ import { makeObservable, observable, action, computed } from "mobx";
 
 import { ILocalStore } from "../types";
 
-type PrivateFields = "_list" | "_page" | "_hasMore" | "_isLoading" | "_load";
+type PrivateFields =
+  | "_list"
+  | "_page"
+  | "_hasMore"
+  | "_isLoading"
+  | "_load"
+  | "_organizationName";
 
 export default class ReposListStore implements ILocalStore {
   private readonly _gitHubStore = new GitHubStore();
   private _list: RepoItem[] = [];
-  private _isLoading: boolean = true;
+  private _isLoading: boolean = false;
   private _hasMore: boolean = true;
   private _page: number = 1;
   private _organizationName: string = "";
   private _load(page: number): void {
+    this._isLoading = true;
     if (this._gitHubStore) {
       this._gitHubStore
         .getOrganizationReposList({
@@ -35,9 +42,10 @@ export default class ReposListStore implements ILocalStore {
         });
     }
   }
-  constructor(organizationName: string) {
-    this._organizationName = organizationName;
+  constructor() {
     makeObservable<ReposListStore, PrivateFields>(this, {
+      _organizationName: observable,
+      organizationName: computed,
       _list: observable,
       list: computed,
       _page: observable,
@@ -48,6 +56,7 @@ export default class ReposListStore implements ILocalStore {
       hasMore: computed,
       _load: action,
       getMore: action,
+      setOrganizationName: action,
     });
   }
 
@@ -61,6 +70,13 @@ export default class ReposListStore implements ILocalStore {
 
   set page(page: number) {
     this._page = page;
+  }
+
+  get organizationName(): string {
+    return this._organizationName;
+  }
+  setOrganizationName(name: string) {
+    this._organizationName = name;
   }
 
   get hasMore(): boolean {

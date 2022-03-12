@@ -16,37 +16,16 @@ import styles from "./ReposSearchPage.module.scss";
 const ReposSearchPage: React.FC = () => {
   const ktsReposListStore = useContext(AppReposContext);
   const [inputValue, setInputValue] = useState<string>("");
-  const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
-  let filtered: null | RepoItem[];
 
   useEffect(() => {
-    ktsReposListStore?.load(ktsReposListStore.page);
-  }, [ktsReposListStore?.page]);
-
-  useEffect(() => {
-    if (inputValue !== "") {
-      if (ktsReposListStore?.list) {
-        filtered = ktsReposListStore.list.filter((repo) =>
-          repo.name.includes(inputValue)
-        );
-      }
-    } else {
-      filtered = null;
+    if (ktsReposListStore?.organizationName) {
+      ktsReposListStore?.load(ktsReposListStore.page);
     }
-    setFilteredRepos(filtered);
-  }, [inputValue]);
+  }, [ktsReposListStore?.page, ktsReposListStore?.organizationName]);
 
   const onClickHandler: () => void = useCallback(() => {
-    if (inputValue !== "") {
-      if (ktsReposListStore?.list) {
-        filtered = ktsReposListStore.list.filter((repo) =>
-          repo.name.includes(inputValue)
-        );
-      }
-    } else {
-      filtered = null;
-    }
-    setFilteredRepos(filtered);
+    ktsReposListStore?.setOrganizationName(inputValue);
+    setInputValue("");
   }, [inputValue]);
 
   const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void = (
@@ -86,13 +65,9 @@ const ReposSearchPage: React.FC = () => {
         }
       >
         {ktsReposListStore?.isLoading && <Spin tip="Загрузка..." />}
-        {filteredRepos
-          ? filteredRepos.map((repo: RepoItem) => {
-              return <RepoTile key={repo.id} RepoItem={repo} />;
-            })
-          : ktsReposListStore?.list?.map((repo: RepoItem) => {
-              return <RepoTile key={repo.id} RepoItem={repo} />;
-            })}
+        {ktsReposListStore?.list?.map((repo: RepoItem) => {
+          return <RepoTile key={repo.id} RepoItem={repo} />;
+        })}
       </InfiniteScroll>
     </div>
   );

@@ -16,20 +16,21 @@ export default class BranchesListStore implements ILocalStore {
   private _isError: boolean = false;
 
   private _load(): void {
-    this._gitHubStore.getRepoBranchesList({
-      ownerName: this._ownerName,
-      repoName: this._repoName,
-    })
-    .then((result: ApiResponse<Branch[], ErrorItem>) => {
-      if (result.status === 200) {
-        this._list = result.data as Branch[];
-      } else {
-        this._isError = true;
-        //eslint-disable-next-line no-console
-        console.error((result.data as ErrorItem).message);
-      }
-      this._isLoading = false;
-    });;
+    this._gitHubStore
+      .getRepoBranchesList({
+        ownerName: this._ownerName,
+        repoName: this._repoName,
+      })
+      .then((result: ApiResponse<Branch[], ErrorItem>) => {
+        if (result.status === 200) {
+          this._list = result.data as Branch[];
+        } else {
+          this._isError = true;
+          //eslint-disable-next-line no-console
+          console.error((result.data as ErrorItem).message);
+        }
+        this._isLoading = false;
+      });
   }
 
   get list(): Branch[] {
