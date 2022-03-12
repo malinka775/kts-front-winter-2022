@@ -21,16 +21,10 @@ const getFormatedDate: (dateStr: string) => string = (dateStr) => {
 };
 
 const RepoTile: React.FC<RepoTileProps> = ({ RepoItem }) => {
-  const navigation = useNavigate();
+  const navigate = useNavigate();
+
   return (
-    <div
-      className={styles.repo}
-      onClick={(e) =>
-        navigation(`/repos/${RepoItem.name}`, {
-          state: { selectedRepo: RepoItem },
-        })
-      }
-    >
+    <div className={styles.repo} onClick={(e) => navigate(`${RepoItem.name}`)}>
       <Avatar
         src={RepoItem.owner.avatar_url}
         letter={RepoItem.owner.login[0].toUpperCase()}

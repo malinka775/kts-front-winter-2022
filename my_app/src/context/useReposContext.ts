@@ -1,6 +1,6 @@
 import ReposListStore from "@store/LocalStore/ReposListStore";
 
-const useReposContext = (organizationName: string) => {
+const useReposContext = () => {
   const reposListStore = new ReposListStore();
   return reposListStore;
 };

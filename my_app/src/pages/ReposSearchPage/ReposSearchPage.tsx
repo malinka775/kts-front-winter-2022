@@ -9,22 +9,29 @@ import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 import { AppReposContext } from "../../App";
 import styles from "./ReposSearchPage.module.scss";
-
+interface ReposListStoreParams {
+  [organizationName: string]: string;
+}
 const ReposSearchPage: React.FC = () => {
   const ktsReposListStore = useContext(AppReposContext);
   const [inputValue, setInputValue] = useState<string>("");
-
+  const navigate = useNavigate();
+  const params = useParams<ReposListStoreParams>();
+  ;
   useEffect(() => {
-    if (ktsReposListStore?.organizationName) {
+    if (params.organizationName) {
+      ktsReposListStore?.setOrganizationName(params.organizationName as string);
       ktsReposListStore?.load(ktsReposListStore.page);
-    }
-  }, [ktsReposListStore?.page, ktsReposListStore?.organizationName]);
+    } 
+  }, [ktsReposListStore?.page, ktsReposListStore?.organizationName, params]);
 
   const onClickHandler: () => void = useCallback(() => {
     ktsReposListStore?.setOrganizationName(inputValue);
+    navigate(`/repos/${ktsReposListStore?.organizationName}`);
     setInputValue("");
   }, [inputValue]);
 

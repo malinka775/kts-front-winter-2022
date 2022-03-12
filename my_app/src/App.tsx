@@ -14,14 +14,22 @@ export const ORGANIZATION_NAME = "ktsstudio";
 export const AppReposContext = createContext<ReposListStore | null>(null);
 
 function App() {
-  const ktsReposListStore = useReposContext("ktsstudio");
+  const ktsReposListStore = useReposContext();
   return (
     <AppReposContext.Provider value={ktsReposListStore}>
       <div className="App">
         <BrowserRouter>
           <Routes>
             <Route path="/repos" element={<ReposSearchPage />} />
-            <Route path="/repos/:name" element={<RepoBranchesDrawer />} />
+            <Route
+              path="/repos/:organizationName/:repoName"
+              element={<RepoBranchesDrawer />}
+            />
+            <Route
+              path="/repos/:organizationName"
+              element={<ReposSearchPage />}
+            />
+
             <Route path="*" element={<ReposSearchPage />} />
           </Routes>
         </BrowserRouter>
