@@ -22,6 +22,7 @@ export default class ReposListStore implements ILocalStore {
   private _organizationName: string = "";
   private _load(page: number): void {
     this._isLoading = true;
+
     if (this._gitHubStore) {
       this._gitHubStore
         .getOrganizationReposList({

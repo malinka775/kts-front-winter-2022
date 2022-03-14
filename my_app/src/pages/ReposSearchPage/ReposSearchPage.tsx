@@ -9,7 +9,7 @@ import { RepoItem } from "@store/GitHubStore/types";
 import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { AppReposContext } from "../../App";
 import styles from "./ReposSearchPage.module.scss";
@@ -21,13 +21,13 @@ const ReposSearchPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const navigate = useNavigate();
   const params = useParams<ReposListStoreParams>();
-  ;
+  console.log("rendered");
   useEffect(() => {
     if (params.organizationName) {
       ktsReposListStore?.setOrganizationName(params.organizationName as string);
       ktsReposListStore?.load(ktsReposListStore.page);
-    } 
-  }, [ktsReposListStore?.page, ktsReposListStore?.organizationName, params]);
+    }
+  }, [ktsReposListStore?.page, params]);
 
   const onClickHandler: () => void = useCallback(() => {
     ktsReposListStore?.setOrganizationName(inputValue);
