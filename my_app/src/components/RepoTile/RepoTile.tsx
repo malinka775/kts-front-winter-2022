@@ -2,47 +2,35 @@ import React from "react";
 
 import Avatar from "@components/Avatar";
 import StarIcon from "@components/StarIcon";
-import { useLocation, useNavigate } from "react-router-dom";
-import { RepoItem } from "src/store/GitHubStore/types";
+import { RepoItemModel } from "@store/models/gitHub";
+import { useNavigate } from "react-router-dom";
 
 import styles from "./RepoTile.module.scss";
 
 type RepoTileProps = {
-  RepoItem: RepoItem;
+  repo: RepoItemModel;
 };
 
-const getFormatedDate: (dateStr: string) => string = (dateStr) => {
-  const date: Date = new Date(dateStr);
-  const days = date.getDate();
-  const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-  };
-  return `${days} ${date.toLocaleString("en-US", options)}`;
-};
-
-const RepoTile: React.FC<RepoTileProps> = ({ RepoItem }) => {
+const RepoTile: React.FC<RepoTileProps> = ({ repo }) => {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.repo} onClick={(e) => navigate(`${RepoItem.name}`)}>
-      <Avatar
-        src={RepoItem.owner.avatar_url}
-        letter={RepoItem.owner.login[0].toUpperCase()}
-      />
+    <div className={styles.repo} onClick={(e) => navigate(`${repo.name}`)}>
+      <Avatar src={repo.owner.avatarUrl} letter={repo.owner.firstLetter} />
       <div className={styles.repo__info}>
-        <div className={styles.repo__info__title}> {RepoItem.name}</div>
+        <div className={styles.repo__info__title}> {repo.name}</div>
         <span className={styles.repo__info__authorLink}>
-          {RepoItem.owner.login}
+          {repo.owner.login}
         </span>
         <div className={styles.repo__otherInfo}>
           <div className={styles.repo__stars}>
             <StarIcon currentColor={"var(--color-star-icon)"} />
             <span className={styles.repo__stars__number}>
-              {RepoItem.stargazers_count}
+              {repo.stargazersCount}
             </span>
           </div>
           <div className={styles.repo__otherInfo__updates}>
-            Updated {getFormatedDate(RepoItem.updated_at)}
+            Updated {repo.updatedAt}
           </div>
         </div>
       </div>

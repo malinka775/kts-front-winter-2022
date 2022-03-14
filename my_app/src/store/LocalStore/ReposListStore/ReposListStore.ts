@@ -1,67 +1,81 @@
 import { ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore";
-import { IGitHubStore, RepoItem } from "@store/GitHubStore/types";
-import { makeObservable, observable, action, computed } from "mobx";
+import { IGitHubStore } from "@store/GitHubStore/types";
+import {
+  normalizeRepoItem,
+  RepoItemApi,
+  RepoItemModel,
+} from "@store/models/gitHub";
+import { Meta } from "@utils/meta";
+import {
+  makeObservable,
+  observable,
+  action,
+  computed,
+  runInAction,
+} from "mobx";
 
 import { ILocalStore } from "../types";
 
 type PrivateFields =
+  | "_gitHubStore"
   | "_list"
   | "_page"
   | "_hasMore"
-  | "_isLoading"
+  | "_meta"
   | "_load"
   | "_organizationName";
 
 export default class ReposListStore implements ILocalStore {
   private readonly _gitHubStore = new GitHubStore();
-  private _list: RepoItem[] = [];
-  private _isLoading: boolean = false;
+  private _list: RepoItemModel[] = [];
+  private _meta: Meta = Meta.initial;
   private _hasMore: boolean = true;
   private _page: number = 1;
   private _organizationName: string = "";
-  private _load(page: number): void {
-    this._isLoading = true;
-
+  private async _load(page: number): Promise<void> {
+    this._meta = Meta.loading;
     if (this._gitHubStore) {
-      this._gitHubStore
-        .getOrganizationReposList({
-          organizationName: this._organizationName,
-          page: this._page,
-          per_page: 7,
-        })
-        .then((result) => {
-          if ((result.data as RepoItem[]).length === 0) {
-            this._hasMore = false;
-          } else {
-            this._list = [...this._list, ...(result.data as RepoItem[])];
-          }
-          this._isLoading = false;
-        })
-        .catch((error) => {
-          console.error((error.data as ErrorItem).message);
-        });
+      const res = await this._gitHubStore.getOrganizationReposList({
+        organizationName: this._organizationName,
+        page: this._page,
+        per_page: 7,
+      });
+
+      runInAction(() => {
+        if ((res.data as RepoItemApi[]).length === 0) {
+          this._hasMore = false;
+        } else {
+          this._list = [
+            ...this._list,
+            ...(res.data as RepoItemApi[]).map(normalizeRepoItem),
+          ];
+        }
+        this._meta = Meta.success;
+        return;
+      });
     }
   }
   constructor() {
     makeObservable<ReposListStore, PrivateFields>(this, {
       _organizationName: observable,
       organizationName: computed,
-      _list: observable,
+      _list: observable.ref,
       list: computed,
       _page: observable,
       page: computed,
-      _isLoading: observable,
-      isLoading: computed,
+      _meta: observable,
+      meta: computed,
       _hasMore: observable,
       hasMore: computed,
       _load: action,
       getMore: action,
       setOrganizationName: action,
+      _gitHubStore: observable,
     });
   }
 
-  get list(): RepoItem[] {
+  get list(): RepoItemModel[] {
     return this._list;
   }
 
@@ -84,8 +98,8 @@ export default class ReposListStore implements ILocalStore {
     return this._hasMore;
   }
 
-  get isLoading(): boolean {
-    return this._isLoading;
+  get meta(): Meta {
+    return this._meta;
   }
 
   load(page: number): void {
@@ -99,7 +113,7 @@ export default class ReposListStore implements ILocalStore {
   destroy(): void {
     this._list = [];
     this._page = 1;
-    this._isLoading = true;
+    this._meta = Meta.initial;
     this._hasMore = true;
     this._organizationName = "";
   }

@@ -1,4 +1,5 @@
 import { ILocalStore } from "@store/LocalStore/types";
+import { RepoItemApi } from "@store/models/gitHub";
 
 import ApiStore from "../../shared/store/ApiStore";
 import {
@@ -11,7 +12,6 @@ import {
   GetOrganizationReposListParams,
   GetRepoBranchesListParams,
   IGitHubStore,
-  RepoItem,
   Branch,
 } from "./types";
 
@@ -20,7 +20,7 @@ export default class GitHubStore implements IGitHubStore, ILocalStore {
 
   async getOrganizationReposList(
     params: GetOrganizationReposListParams
-  ): Promise<ApiResponse<RepoItem[], ErrorItem>> {
+  ): Promise<ApiResponse<RepoItemApi[], ErrorItem>> {
     return this._apiStore.request({
       method: HTTPMethod.GET,
       endpoint: `/orgs/${params.organizationName}/repos`,

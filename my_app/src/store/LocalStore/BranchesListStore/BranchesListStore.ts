@@ -2,7 +2,13 @@ import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore/GitHubStore";
 import { Branch } from "@store/GitHubStore/types";
 import { Meta } from "@utils/meta";
-import { action, computed, makeObservable, observable } from "mobx";
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from "mobx";
 import { addReactionToTrack } from "mobx-react-lite/dist/utils/reactionCleanupTracking";
 
 import { ILocalStore } from "../types";
@@ -21,23 +27,21 @@ export default class BranchesListStore implements ILocalStore {
   private _repoName: string = "";
   private _meta: Meta = Meta.initial;
 
-  private _load(): void {
+  private async _load(): Promise<void> {
     this._meta = Meta.loading;
-    this._gitHubStore
-      .getRepoBranchesList({
-        ownerName: this._ownerName,
-        repoName: this._repoName,
-      })
-      .then((result: ApiResponse<Branch[], ErrorItem>) => {
-        if (result.status === 200) {
-          this._meta = Meta.success;
-          this._list = result.data as Branch[];
-          return;
-        }
-        this._meta = Meta.error;
-        //eslint-disable-next-line no-console
-        console.error((result.data as ErrorItem).message);
-      });
+    const res = await this._gitHubStore.getRepoBranchesList({
+      ownerName: this._ownerName,
+      repoName: this._repoName,
+    });
+
+    runInAction(() => {
+      if (res.status === 200) {
+        this._meta = Meta.success;
+        this._list = res.data as Branch[];
+        return;
+      }
+      this._meta = Meta.error;
+    });
   }
 
   get list(): Branch[] {
@@ -62,6 +66,7 @@ export default class BranchesListStore implements ILocalStore {
 
   destroy(): void {
     this._list = [];
+    this._meta = Meta.initial;
     this._ownerName = "";
     this._repoName = "";
   }

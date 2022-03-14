@@ -1,3 +1,5 @@
+import { RepoItemApi } from "@store/models/gitHub";
+
 import {
   ApiResponse,
   ErrorItem,
@@ -14,7 +16,7 @@ import {
 export interface IGitHubStore {
   getOrganizationReposList(
     params: GetOrganizationReposListParams
-  ): Promise<ApiResponse<RepoItem[], ErrorItem>>;
+  ): Promise<ApiResponse<RepoItemApi[], ErrorItem>>;
   createRepo(params: CreateRepoParams): Promise<ApiResponse<string, ErrorItem>>;
 }
 
@@ -32,22 +34,6 @@ export type GetRepoBranchesListParams = {
 export type CreateRepoParams = {
   repoName: string;
   token: string;
-};
-
-export type RepoItem = {
-  id: number;
-  name: string;
-  owner: {
-    login: string;
-    id: number;
-    avatar_url: string;
-  };
-  stargazers_count: number;
-  updated_at: string;
-  private: boolean;
-  html_url: string;
-  disabled: false;
-  visibility: string;
 };
 
 export type Branch = {

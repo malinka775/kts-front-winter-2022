@@ -2,7 +2,6 @@ import { useState, useEffect, memo } from "react";
 
 import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore";
-import { RepoItem } from "@store/GitHubStore/types";
 import { Branch } from "@store/GitHubStore/types";
 import BranchesListStore from "@store/LocalStore/BranchesListStore";
 import { useLocalStore } from "@store/LocalStore/useLocalStore";
@@ -31,7 +30,6 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
     branchesListStore.setRepoName(params.repoName as string);
     branchesListStore.load();
   }, [params]);
-  console.log(branchesListStore.list);
   return (
     <Drawer
       title={`Список веток в ${params.repoName}:`}

@@ -1,12 +1,14 @@
-import { useEffect, useState, useCallback, useContext } from "react";
+import { useEffect, useState, useCallback, useContext, memo } from "react";
 import React from "react";
 
 import Button from "@components/Button";
 import Input from "@components/Input";
 import RepoTile from "@components/RepoTile";
 import SearchIcon from "@components/SearchIcon";
-import { RepoItem } from "@store/GitHubStore/types";
+import { RepoItemModel } from "@store/models/gitHub";
+import { Meta } from "@utils/meta";
 import { Spin } from "antd";
+import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate, useParams } from "react-router-dom";
@@ -21,13 +23,17 @@ const ReposSearchPage: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const navigate = useNavigate();
   const params = useParams<ReposListStoreParams>();
-  console.log("rendered");
-  useEffect(() => {
-    if (params.organizationName) {
-      ktsReposListStore?.setOrganizationName(params.organizationName as string);
-      ktsReposListStore?.load(ktsReposListStore.page);
-    }
-  }, [ktsReposListStore?.page, params]);
+  useEffect(
+    action(() => {
+      if (params.organizationName) {
+        ktsReposListStore?.setOrganizationName(
+          params.organizationName as string
+        );
+        ktsReposListStore?.load(ktsReposListStore.page);
+      }
+    }),
+    [ktsReposListStore?.page, params]
+  );
 
   const onClickHandler: () => void = useCallback(() => {
     ktsReposListStore?.setOrganizationName(inputValue);
@@ -35,17 +41,19 @@ const ReposSearchPage: React.FC = () => {
     setInputValue("");
   }, [inputValue]);
 
-  const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void = (
-    e
-  ) => {
-    setInputValue(e.target.value);
-  };
+  const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void =
+    useCallback(
+      (e) => {
+        setInputValue(e.target.value);
+      },
+      [inputValue]
+    );
 
-  const getNextData: () => void = () => {
+  const getNextData: () => void = useCallback(() => {
     if (ktsReposListStore) {
       ktsReposListStore.getMore();
     }
-  };
+  }, []);
 
   return (
     <div className={styles.reposSearchPage}>
@@ -71,9 +79,12 @@ const ReposSearchPage: React.FC = () => {
           </p>
         }
       >
-        {ktsReposListStore?.isLoading && <Spin tip="Загрузка..." />}
-        {ktsReposListStore?.list?.map((repo: RepoItem) => {
-          return <RepoTile key={repo.id} RepoItem={repo} />;
+        {ktsReposListStore?.meta === Meta.loading && <Spin tip="Загрузка..." />}
+        {ktsReposListStore?.meta === Meta.error && (
+          <div> Что-то пошло не так... </div>
+        )}
+        {ktsReposListStore?.list?.map((repo: RepoItemModel) => {
+          return <RepoTile key={repo.id} repo={repo} />;
         })}
       </InfiniteScroll>
     </div>

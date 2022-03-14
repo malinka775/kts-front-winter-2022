@@ -1,8 +1,9 @@
 // Здесь необходимо продемонстрировать создание и использование GitHubStore
 
+import { RepoItemApi } from "@store/models/gitHub";
+
 import { ApiResponse, ErrorItem } from "../shared/store/ApiStore/types";
 import GitHubStore from "../store/GitHubStore/GitHubStore";
-import { RepoItem } from "../store/GitHubStore/types";
 
 const gitHubStore = new GitHubStore();
 //for GET
@@ -15,7 +16,7 @@ gitHubStore
   .getOrganizationReposList({
     organizationName: EXAMPLE_ORGANIZATION,
   })
-  .then((result: ApiResponse<RepoItem[], ErrorItem>) => {
+  .then((result: ApiResponse<RepoItemApi[], ErrorItem>) => {
     return result; // в консоли появится список репозиториев в ktsstudio
   });
 
