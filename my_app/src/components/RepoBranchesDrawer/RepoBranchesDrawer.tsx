@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Branch } from "@store/GitHubStore/types";
 import BranchesListStore from "@store/LocalStore/BranchesListStore";
 import { useLocalStore } from "@store/LocalStore/useLocalStore";
-import { Meta } from "@utils/meta";
 import { Drawer, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useParams, useNavigate } from "react-router-dom";
@@ -35,8 +34,8 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
       onClose={(e) => navigation(-1)}
       visible={visible}
     >
-      {branchesListStore.meta === Meta.loading && <Spin tip="Загрузка..." />}
-      {branchesListStore.meta === Meta.error && (
+      {branchesListStore.isListLoading() && <Spin tip="Загрузка..." />}
+      {branchesListStore.isFetchingError() && (
         <div>Не удается загрузить репозиторий</div>
       )}
       {branchesListStore.list.map((branch: Branch) => {

@@ -24,14 +24,36 @@ type PrivateFields =
   | "_load"
   | "_organizationName";
 
+const INIT_PAGE = 1;
+
 export default class ReposListStore implements ILocalStore {
   private readonly _gitHubStore = new GitHubStore();
   private _list: CollectionModel<number, RepoItemModel> =
     getInitialCollectionModel();
   private _meta: Meta = Meta.initial;
   private _hasMore: boolean = true;
-  private _page: number = 1;
+  private _page: number = INIT_PAGE;
   private _organizationName: string = "";
+
+  constructor() {
+    makeObservable<ReposListStore, PrivateFields>(this, {
+      _organizationName: observable,
+      organizationName: computed,
+      _list: observable,
+      list: computed,
+      _page: observable,
+      page: computed,
+      _meta: observable,
+      meta: computed,
+      _hasMore: observable,
+      hasMore: computed,
+      _load: action,
+      getMore: action,
+      setOrganizationName: action,
+      _gitHubStore: observable,
+    });
+  }
+
   private async _load(page: number): Promise<void> {
     this._meta = Meta.loading;
     if (this._gitHubStore) {
@@ -71,24 +93,6 @@ export default class ReposListStore implements ILocalStore {
       });
     }
   }
-  constructor() {
-    makeObservable<ReposListStore, PrivateFields>(this, {
-      _organizationName: observable,
-      organizationName: computed,
-      _list: observable,
-      list: computed,
-      _page: observable,
-      page: computed,
-      _meta: observable,
-      meta: computed,
-      _hasMore: observable,
-      hasMore: computed,
-      _load: action,
-      getMore: action,
-      setOrganizationName: action,
-      _gitHubStore: observable,
-    });
-  }
 
   get list(): RepoItemModel[] {
     return this._list.order.map((id) => this._list.entities[id]);
@@ -121,9 +125,17 @@ export default class ReposListStore implements ILocalStore {
     this._page = this._page + 1;
   }
 
+  isListLoading(): boolean {
+    return this._meta === Meta.loading;
+  }
+
+  isFetchingError(): boolean {
+    return this._meta === Meta.error;
+  }
+
   destroy(): void {
     this._list = getInitialCollectionModel();
-    this._page = 1;
+    this._page = INIT_PAGE;
     this._meta = Meta.initial;
     this._hasMore = true;
     this._organizationName = "";

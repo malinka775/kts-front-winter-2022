@@ -1,8 +1,8 @@
 // Здесь необходимо продемонстрировать создание и использование GitHubStore
 
+import { ApiResponse, ErrorItem } from "@shared/store/RootStore/ApiStore/types";
 import { RepoItemApi } from "@store/models/gitHub";
 
-import { ApiResponse, ErrorItem } from "../shared/store/ApiStore/types";
 import GitHubStore from "../store/GitHubStore/GitHubStore";
 
 const gitHubStore = new GitHubStore();

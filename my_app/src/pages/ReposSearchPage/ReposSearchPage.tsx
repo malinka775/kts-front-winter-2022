@@ -6,7 +6,6 @@ import Input from "@components/Input";
 import RepoTile from "@components/RepoTile";
 import SearchIcon from "@components/SearchIcon";
 import { RepoItemModel } from "@store/models/gitHub";
-import { Meta } from "@utils/meta";
 import { Spin } from "antd";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -74,8 +73,8 @@ const ReposSearchPage: React.FC = () => {
           </p>
         }
       >
-        {ktsReposListStore?.meta === Meta.loading && <Spin tip="Загрузка..." />}
-        {ktsReposListStore?.meta === Meta.error && (
+        {ktsReposListStore?.isListLoading() && <Spin tip="Загрузка..." />}
+        {ktsReposListStore?.isFetchingError() && (
           <div> Что-то пошло не так... </div>
         )}
         {ktsReposListStore?.list?.map((repo: RepoItemModel) => {

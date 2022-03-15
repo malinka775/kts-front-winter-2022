@@ -1,12 +1,12 @@
-import { ILocalStore } from "@store/LocalStore/types";
-import { RepoItemApi } from "@store/models/gitHub";
-
-import ApiStore from "../../shared/store/ApiStore";
+import ApiStore from "@shared/store/RootStore/ApiStore";
 import {
   ApiResponse,
   ErrorItem,
   HTTPMethod,
-} from "../../shared/store/ApiStore/types";
+} from "@shared/store/RootStore/ApiStore/types";
+import { ILocalStore } from "@store/LocalStore/types";
+import { RepoItemApi } from "@store/models/gitHub";
+
 import {
   CreateRepoParams,
   GetOrganizationReposListParams,

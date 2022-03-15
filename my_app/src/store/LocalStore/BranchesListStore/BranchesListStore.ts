@@ -25,6 +25,21 @@ export default class BranchesListStore implements ILocalStore {
   private _repoName: string = "";
   private _meta: Meta = Meta.initial;
 
+  constructor() {
+    makeObservable<BranchesListStore, PrivateFields>(this, {
+      _ownerName: observable,
+      _repoName: observable,
+      _list: observable.ref,
+      _meta: observable,
+      _load: action,
+      destroy: action,
+      list: computed,
+      meta: computed,
+      setOwnerName: action,
+      setRepoName: action,
+    });
+  }
+
   private async _load(): Promise<void> {
     this._meta = Meta.loading;
     const res = await this._gitHubStore.getRepoBranchesList({
@@ -62,24 +77,18 @@ export default class BranchesListStore implements ILocalStore {
     this._repoName = name;
   }
 
+  isListLoading(): boolean {
+    return this._meta === Meta.loading;
+  }
+
+  isFetchingError(): boolean {
+    return this._meta === Meta.error;
+  }
+
   destroy(): void {
     this._list = [];
     this._meta = Meta.initial;
     this._ownerName = "";
     this._repoName = "";
-  }
-  constructor() {
-    makeObservable<BranchesListStore, PrivateFields>(this, {
-      _ownerName: observable,
-      _repoName: observable,
-      _list: observable.ref,
-      _meta: observable,
-      _load: action,
-      destroy: action,
-      list: computed,
-      meta: computed,
-      setOwnerName: action,
-      setRepoName: action,
-    });
   }
 }
