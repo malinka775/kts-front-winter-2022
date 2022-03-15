@@ -1,14 +1,12 @@
-import { useState, useEffect, memo } from "react";
+import { useEffect } from "react";
 
-import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
-import GitHubStore from "@store/GitHubStore";
 import { Branch } from "@store/GitHubStore/types";
 import BranchesListStore from "@store/LocalStore/BranchesListStore";
 import { useLocalStore } from "@store/LocalStore/useLocalStore";
 import { Meta } from "@utils/meta";
 import { Drawer, Spin } from "antd";
 import { observer } from "mobx-react-lite";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export type RepoBranchesDrawerProps = {
   visible?: boolean;
@@ -29,7 +27,7 @@ const RepoBranchesDrawer: React.FC<RepoBranchesDrawerProps> = ({
     branchesListStore.setOwnerName(params.organizationName as string);
     branchesListStore.setRepoName(params.repoName as string);
     branchesListStore.load();
-  }, [params]);
+  }, [params, branchesListStore]);
   return (
     <Drawer
       title={`Список веток в ${params.repoName}:`}

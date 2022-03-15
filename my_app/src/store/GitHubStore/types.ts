@@ -1,10 +1,6 @@
 import { RepoItemApi } from "@store/models/gitHub";
 
-import {
-  ApiResponse,
-  ErrorItem,
-  StatusHTTP,
-} from "../../shared/store/ApiStore/types";
+import { ApiResponse, ErrorItem } from "../../shared/store/ApiStore/types";
 
 /** Интерфейс класса для работы с GitHub API
  * названия getOrganizationReposList

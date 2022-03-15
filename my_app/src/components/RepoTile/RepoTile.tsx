@@ -3,6 +3,8 @@ import React from "react";
 import Avatar from "@components/Avatar";
 import StarIcon from "@components/StarIcon";
 import { RepoItemModel } from "@store/models/gitHub";
+import { action } from "mobx";
+import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 
 import styles from "./RepoTile.module.scss";
@@ -15,7 +17,10 @@ const RepoTile: React.FC<RepoTileProps> = ({ repo }) => {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.repo} onClick={(e) => navigate(`${repo.name}`)}>
+    <div
+      className={styles.repo}
+      onClick={action((e) => navigate(`${repo.name}`))}
+    >
       <Avatar src={repo.owner.avatarUrl} letter={repo.owner.firstLetter} />
       <div className={styles.repo__info}>
         <div className={styles.repo__info__title}> {repo.name}</div>
@@ -38,4 +43,4 @@ const RepoTile: React.FC<RepoTileProps> = ({ repo }) => {
   );
 };
 
-export default React.memo(RepoTile);
+export default observer(RepoTile);

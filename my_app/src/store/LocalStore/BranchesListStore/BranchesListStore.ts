@@ -1,4 +1,3 @@
-import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore/GitHubStore";
 import { Branch } from "@store/GitHubStore/types";
 import { Meta } from "@utils/meta";
@@ -9,7 +8,6 @@ import {
   observable,
   runInAction,
 } from "mobx";
-import { addReactionToTrack } from "mobx-react-lite/dist/utils/reactionCleanupTracking";
 
 import { ILocalStore } from "../types";
 

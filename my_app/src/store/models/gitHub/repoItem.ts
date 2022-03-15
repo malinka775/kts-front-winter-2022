@@ -39,11 +39,13 @@ export const normalizeRepoItem = (from: RepoItemApi): RepoItemModel => {
       stargazersCount: from.stargazers_count,
       updatedAt: getFormatedDate(from.updated_at),
       htmlUrl: from.html_url,
-    }
+    };
   } catch (error) {
-    console.error(error)
+    // eslint-disable-next-line no-console
+    console.error(error);
     return {} as RepoItemModel;
-  } };
+  }
+};
 
 const getFormatedDate: (dateStr: string) => string = (dateStr) => {
   const date: Date = new Date(dateStr);

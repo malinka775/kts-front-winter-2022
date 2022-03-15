@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext, memo } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import React from "react";
 
 import Button from "@components/Button";
@@ -29,31 +29,26 @@ const ReposSearchPage: React.FC = () => {
         ktsReposListStore?.setOrganizationName(
           params.organizationName as string
         );
-        ktsReposListStore?.load(ktsReposListStore.page);
+        ktsReposListStore?.load();
       }
     }),
-    [ktsReposListStore?.page, params]
+    [params, ktsReposListStore?.page]
   );
 
-  const onClickHandler: () => void = useCallback(() => {
+  const onClickHandler: () => void = action(() => {
     ktsReposListStore?.setOrganizationName(inputValue);
     navigate(`/repos/${ktsReposListStore?.organizationName}`);
     setInputValue("");
-  }, [inputValue]);
+  });
 
   const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void =
-    useCallback(
-      (e) => {
-        setInputValue(e.target.value);
-      },
-      [inputValue]
-    );
+    useCallback((e) => {
+      setInputValue(e.target.value);
+    }, []);
 
   const getNextData: () => void = useCallback(() => {
-    if (ktsReposListStore) {
-      ktsReposListStore.getMore();
-    }
-  }, []);
+    ktsReposListStore?.getMore();
+  }, [ktsReposListStore]);
 
   return (
     <div className={styles.reposSearchPage}>

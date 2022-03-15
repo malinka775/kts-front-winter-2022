@@ -1,11 +1,9 @@
-import { ErrorItem } from "@shared/store/ApiStore/types";
 import GitHubStore from "@store/GitHubStore";
-import { IGitHubStore } from "@store/GitHubStore/types";
+import { normalizeRepoItem, RepoItemModel } from "@store/models/gitHub";
 import {
-  normalizeRepoItem,
-  RepoItemApi,
-  RepoItemModel,
-} from "@store/models/gitHub";
+  CollectionModel,
+  getInitialCollectionModel,
+} from "@store/models/shared/collection";
 import { Meta } from "@utils/meta";
 import {
   makeObservable,
@@ -28,7 +26,8 @@ type PrivateFields =
 
 export default class ReposListStore implements ILocalStore {
   private readonly _gitHubStore = new GitHubStore();
-  private _list: RepoItemModel[] = [];
+  private _list: CollectionModel<number, RepoItemModel> =
+    getInitialCollectionModel();
   private _meta: Meta = Meta.initial;
   private _hasMore: boolean = true;
   private _page: number = 1;
@@ -43,16 +42,32 @@ export default class ReposListStore implements ILocalStore {
       });
 
       runInAction(() => {
-        if ((res.data as RepoItemApi[]).length === 0) {
-          this._hasMore = false;
+        if (!res.success) {
+          this._meta = Meta.error;
         } else {
-          this._list = [
-            ...this._list,
-            ...(res.data as RepoItemApi[]).map(normalizeRepoItem),
-          ];
+          try {
+            let list = getInitialCollectionModel();
+            if (res.data.length === 0) {
+              this._hasMore = false;
+            } else {
+              for (const item of res.data) {
+                if (!this._list.order.includes(item.id))
+                  list.order.push(item.id);
+                list.entities[item.id] = normalizeRepoItem(item);
+              }
+
+              this._list.order = [...this._list.order, ...list.order];
+              this._list.entities = {
+                ...this._list.entities,
+                ...list.entities,
+              };
+            }
+            this._meta = Meta.success;
+            return;
+          } catch (error) {
+            this._meta = Meta.error;
+          }
         }
-        this._meta = Meta.success;
-        return;
       });
     }
   }
@@ -60,7 +75,7 @@ export default class ReposListStore implements ILocalStore {
     makeObservable<ReposListStore, PrivateFields>(this, {
       _organizationName: observable,
       organizationName: computed,
-      _list: observable.ref,
+      _list: observable,
       list: computed,
       _page: observable,
       page: computed,
@@ -76,15 +91,11 @@ export default class ReposListStore implements ILocalStore {
   }
 
   get list(): RepoItemModel[] {
-    return this._list;
+    return this._list.order.map((id) => this._list.entities[id]);
   }
 
   get page(): number {
     return this._page;
-  }
-
-  set page(page: number) {
-    this._page = page;
   }
 
   get organizationName(): string {
@@ -102,8 +113,8 @@ export default class ReposListStore implements ILocalStore {
     return this._meta;
   }
 
-  load(page: number): void {
-    this._load(page);
+  load(): void {
+    this._load(this._page);
   }
 
   getMore(): void {
@@ -111,7 +122,7 @@ export default class ReposListStore implements ILocalStore {
   }
 
   destroy(): void {
-    this._list = [];
+    this._list = getInitialCollectionModel();
     this._page = 1;
     this._meta = Meta.initial;
     this._hasMore = true;
