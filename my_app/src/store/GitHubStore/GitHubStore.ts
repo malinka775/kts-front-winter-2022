@@ -1,21 +1,27 @@
-import ApiStore from "../../shared/store/ApiStore";
-import { ApiResponse, ErrorItem, HTTPMethod } from "../../shared/store/ApiStore/types";
+import ApiStore from "@shared/store/RootStore/ApiStore";
+import {
+  ApiResponse,
+  ErrorItem,
+  HTTPMethod,
+} from "@shared/store/RootStore/ApiStore/types";
+import { ILocalStore } from "@store/LocalStore/types";
+import { RepoItemApi } from "@store/models/gitHub";
+
 import {
   CreateRepoParams,
   GetOrganizationReposListParams,
   GetRepoBranchesListParams,
   IGitHubStore,
-  RepoItem,
   Branch,
 } from "./types";
 
-export default class GitHubStore implements IGitHubStore {
-  private readonly apiStore = new ApiStore("https://api.github.com");
+export default class GitHubStore implements IGitHubStore, ILocalStore {
+  private readonly _apiStore = new ApiStore("https://api.github.com");
 
   async getOrganizationReposList(
     params: GetOrganizationReposListParams
-  ): Promise<ApiResponse<RepoItem[], ErrorItem>> {
-    return this.apiStore.request({
+  ): Promise<ApiResponse<RepoItemApi[], ErrorItem>> {
+    return this._apiStore.request({
       method: HTTPMethod.GET,
       endpoint: `/orgs/${params.organizationName}/repos`,
       headers: {}, // Объект с передаваемыми HTTP-заголовками
@@ -29,7 +35,7 @@ export default class GitHubStore implements IGitHubStore {
   async getRepoBranchesList(
     params: GetRepoBranchesListParams
   ): Promise<ApiResponse<Branch[], ErrorItem>> {
-    return this.apiStore.request({
+    return this._apiStore.request({
       method: HTTPMethod.GET,
       endpoint: `/repos/${params.ownerName}/${params.repoName}/branches`,
       headers: {}, // Объект с передаваемыми HTTP-заголовками
@@ -40,7 +46,7 @@ export default class GitHubStore implements IGitHubStore {
   async createRepo(
     params: CreateRepoParams
   ): Promise<ApiResponse<string, ErrorItem>> {
-    return this.apiStore.request({
+    return this._apiStore.request({
       method: HTTPMethod.POST,
       endpoint: `/user/repos`,
       headers: {
@@ -50,4 +56,5 @@ export default class GitHubStore implements IGitHubStore {
       data: { name: params.repoName },
     });
   }
+  destroy() {}
 }

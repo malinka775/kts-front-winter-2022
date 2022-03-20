@@ -1,61 +1,53 @@
-import { useEffect, useState, memo, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import React from "react";
 
 import Button from "@components/Button";
 import Input from "@components/Input";
 import RepoTile from "@components/RepoTile";
 import SearchIcon from "@components/SearchIcon";
-import useReposContext from "@context/useReposContext";
-import { ApiResponse, ErrorItem } from "@shared/store/ApiStore/types";
-import GitHubStore from "@store/GitHubStore/GitHubStore";
-import { RepoItem } from "@store/GitHubStore/types";
+import { RepoItemModel } from "@store/models/gitHub";
 import { Spin } from "antd";
+import { action } from "mobx";
+import { observer } from "mobx-react-lite";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useNavigate, useParams } from "react-router-dom";
 
+import { AppReposContext } from "../../App";
 import styles from "./ReposSearchPage.module.scss";
-
+interface ReposListStoreParams {
+  [organizationName: string]: string;
+}
 const ReposSearchPage: React.FC = () => {
-  const { list, load, isLoading, hasMore } = useReposContext();
+  const ktsReposListStore = useContext(AppReposContext);
   const [inputValue, setInputValue] = useState<string>("");
-  const [filteredRepos, setFilteredRepos] = useState<RepoItem[] | null>(null);
-  const [page, setPage] = useState<number>(1);
-  let filtered: null | RepoItem[];
-
-  useEffect(() => {
-    load(page);
-  }, [page]);
-
-  useEffect(() => {
-    if (inputValue !== "") {
-      if (list) {
-        filtered = list.filter((repo) => repo.name.includes(inputValue));
+  const navigate = useNavigate();
+  const params = useParams<ReposListStoreParams>();
+  useEffect(
+    action(() => {
+      if (params.organizationName) {
+        ktsReposListStore?.setOrganizationName(
+          params.organizationName as string
+        );
+        ktsReposListStore?.load();
       }
-    } else {
-      filtered = null;
-    }
-    setFilteredRepos(filtered);
-  }, [inputValue]);
+    }),
+    [params, ktsReposListStore?.page]
+  );
 
-  const onClickHandler: () => void = useCallback(() => {
-    if (inputValue !== "") {
-      if (list) {
-        filtered = list.filter((repo) => repo.name.includes(inputValue));
-      }
-    } else {
-      filtered = null;
-    }
-    setFilteredRepos(filtered);
-  }, [inputValue]);
+  const onClickHandler: () => void = action(() => {
+    ktsReposListStore?.setOrganizationName(inputValue);
+    navigate(`/repos/${ktsReposListStore?.organizationName}`);
+    setInputValue("");
+  });
 
-  const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void = (
-    e
-  ) => {
-    setInputValue(e.target.value);
-  };
+  const onChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void =
+    useCallback((e) => {
+      setInputValue(e.target.value);
+    }, []);
 
-  const getNextData: () => void = () => {
-    setPage(page + 1);
-  };
+  const getNextData: () => void = useCallback(() => {
+    ktsReposListStore?.getMore();
+  }, [ktsReposListStore]);
 
   return (
     <div className={styles.reposSearchPage}>
@@ -71,9 +63,9 @@ const ReposSearchPage: React.FC = () => {
         </Button>
       </div>
       <InfiniteScroll
-        dataLength={list.length} //This is important field to render the next data
+        dataLength={ktsReposListStore ? ktsReposListStore.list.length : 0} //This is important field to render the next data
         next={getNextData}
-        hasMore={hasMore}
+        hasMore={ktsReposListStore ? ktsReposListStore.hasMore : false}
         loader={<h4>Loading...</h4>}
         endMessage={
           <p style={{ textAlign: "center" }}>
@@ -81,17 +73,16 @@ const ReposSearchPage: React.FC = () => {
           </p>
         }
       >
-        {isLoading && <Spin tip="Загрузка..." />}
-        {filteredRepos
-          ? filteredRepos.map((repo: RepoItem) => {
-              return <RepoTile key={repo.id} RepoItem={repo} />;
-            })
-          : list?.map((repo: RepoItem) => {
-              return <RepoTile key={repo.id} RepoItem={repo} />;
-            })}
+        {ktsReposListStore?.isListLoading() && <Spin tip="Загрузка..." />}
+        {ktsReposListStore?.isFetchingError() && (
+          <div> Что-то пошло не так... </div>
+        )}
+        {ktsReposListStore?.list?.map((repo: RepoItemModel) => {
+          return <RepoTile key={repo.id} repo={repo} />;
+        })}
       </InfiniteScroll>
     </div>
   );
 };
 
-export default memo(ReposSearchPage);
+export default observer(ReposSearchPage);
